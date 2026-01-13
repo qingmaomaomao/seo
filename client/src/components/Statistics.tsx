@@ -9,18 +9,14 @@ import {
 import { getStatistics } from '../services/api';
 import { Statistics as StatisticsType } from '../types';
 
-interface StatisticsProps {
-  batchId: number;
-}
-
-const Statistics: React.FC<StatisticsProps> = ({ batchId }) => {
+const Statistics: React.FC = () => {
   const [stats, setStats] = useState<StatisticsType | null>(null);
   const [loading, setLoading] = useState(false);
 
   const loadStats = async () => {
     setLoading(true);
     try {
-      const data = await getStatistics(batchId);
+      const data = await getStatistics();
       setStats(data);
     } catch (error) {
       console.error('Failed to load statistics:', error);
@@ -33,12 +29,14 @@ const Statistics: React.FC<StatisticsProps> = ({ batchId }) => {
     loadStats();
     const interval = setInterval(loadStats, 5000); // 每5秒刷新一次
     return () => clearInterval(interval);
-  }, [batchId]);
+  }, []);
 
   if (!stats) return null;
 
   const generatedPercent =
-    stats.total > 0 ? Math.round((stats.generated_count / stats.total) * 100) : 0;
+    stats.total_keywords > 0
+      ? Math.round((stats.generated_keywords / stats.total_keywords) * 100)
+      : 0;
 
   return (
     <div style={{ marginBottom: 24 }}>
@@ -47,7 +45,7 @@ const Statistics: React.FC<StatisticsProps> = ({ batchId }) => {
           <Card>
             <Statistic
               title="总关键词"
-              value={stats.total}
+              value={stats.total_keywords}
               prefix={<FileTextOutlined />}
               valueStyle={{ color: '#1890ff' }}
             />
@@ -58,7 +56,7 @@ const Statistics: React.FC<StatisticsProps> = ({ batchId }) => {
           <Card>
             <Statistic
               title="已生成"
-              value={stats.generated_count}
+              value={stats.generated_keywords}
               prefix={<CheckCircleOutlined />}
               valueStyle={{ color: '#52c41a' }}
             />
@@ -74,7 +72,7 @@ const Statistics: React.FC<StatisticsProps> = ({ batchId }) => {
           <Card>
             <Statistic
               title="处理中"
-              value={stats.processing_count}
+              value={stats.processing_keywords}
               prefix={<LoadingOutlined />}
               valueStyle={{ color: '#faad14' }}
             />
@@ -85,7 +83,7 @@ const Statistics: React.FC<StatisticsProps> = ({ batchId }) => {
           <Card>
             <Statistic
               title="失败"
-              value={stats.failed_count}
+              value={stats.failed_keywords}
               prefix={<CloseCircleOutlined />}
               valueStyle={{ color: '#ff4d4f' }}
             />
@@ -98,7 +96,7 @@ const Statistics: React.FC<StatisticsProps> = ({ batchId }) => {
           <Card size="small">
             <Statistic
               title="Create 页面"
-              value={stats.create_count}
+              value={stats.category_counts.create}
               valueStyle={{ fontSize: 18 }}
             />
           </Card>
@@ -108,7 +106,7 @@ const Statistics: React.FC<StatisticsProps> = ({ batchId }) => {
           <Card size="small">
             <Statistic
               title="Tool 页面"
-              value={stats.tool_count}
+              value={stats.category_counts.tool}
               valueStyle={{ fontSize: 18 }}
             />
           </Card>
@@ -118,7 +116,7 @@ const Statistics: React.FC<StatisticsProps> = ({ batchId }) => {
           <Card size="small">
             <Statistic
               title="Templates 页面"
-              value={stats.templates_count}
+              value={stats.category_counts.templates}
               valueStyle={{ fontSize: 18 }}
             />
           </Card>
@@ -128,7 +126,7 @@ const Statistics: React.FC<StatisticsProps> = ({ batchId }) => {
           <Card size="small">
             <Statistic
               title="Blog 页面"
-              value={stats.blog_count}
+              value={stats.category_counts.blog}
               valueStyle={{ fontSize: 18 }}
             />
           </Card>

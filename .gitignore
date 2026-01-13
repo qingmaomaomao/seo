@@ -1,11 +1,42 @@
-node_modules
-dist
-build
-*.log
+# Dependencies
+node_modules/
+client/node_modules/
+
+# Build outputs
+dist/
+client/dist/
+build/
+
+# Environment variables
 .env
+.env.local
+.env.*.local
+client/.env
+client/.env.local
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
 .DS_Store
-*.sqlite
-*.db
-uploads/
-.vscode
-.idea
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Testing
+coverage/
+.nyc_output/
+
+# OS
+Thumbs.db

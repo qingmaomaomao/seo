@@ -22,7 +22,7 @@ export interface Keyword {
   category?: 'create' | 'tool' | 'templates' | 'blog';
   status: 'pending' | 'classified';
   workflow_status: 'not_started' | 'processing' | 'completed' | 'failed';
-  result_data?: string;
+  workflow_data?: any;
   created_at: string;
   updated_at: string;
 }
@@ -40,12 +40,14 @@ export interface KeywordsResponse {
 }
 
 export interface Statistics {
-  total: number;
-  create_count: number;
-  tool_count: number;
-  templates_count: number;
-  blog_count: number;
-  generated_count: number;
-  processing_count: number;
-  failed_count: number;
+  total_keywords: number;
+  generated_keywords: number;
+  processing_keywords: number;
+  failed_keywords: number;
+  category_counts: {
+    create: number;
+    tool: number;
+    templates: number;
+    blog: number;
+  };
 }

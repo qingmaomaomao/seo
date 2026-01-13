@@ -53,6 +53,8 @@ const App: React.FC = () => {
       </Header>
       <Content className="app-content">
         <div className="content-container">
+          <Statistics />
+
           <Tabs defaultActiveKey="upload" type="card">
             <TabPane tab="上传关键词" key="upload">
               <UploadPanel onSuccess={handleUploadSuccess} />
@@ -69,13 +71,10 @@ const App: React.FC = () => {
 
             <TabPane tab="关键词管理" key="keywords" disabled={!selectedBatch}>
               {selectedBatch && (
-                <>
-                  <Statistics batchId={selectedBatch.id} />
-                  <KeywordTable
-                    batch={selectedBatch}
-                    onUpdate={loadBatches}
-                  />
-                </>
+                <KeywordTable
+                  batch={selectedBatch}
+                  onUpdate={loadBatches}
+                />
               )}
             </TabPane>
           </Tabs>

@@ -1,250 +1,270 @@
-# SEO 页面生成工具
+# SEO 页面生成工具（纯前端版本）
 
-一个自动化的 SEO 页面生成工具，支持关键词上传、智能分类和批量生成页面数据。
+自动化 SEO 页面生成工具的前端界面，支持关键词上传、AI 分类和批量生成页面数据。
 
 ## 功能特性
 
-### 1. 关键词上传
-- 支持上传 CSV 和 Excel 格式的关键词数据
-- 支持两种上传类型：
-  - **主站关键词**：需要通过 AI 挖掘分类
-  - **Blog 类型**：直接分类为 Blog 页面
-- 自动解析关键词、搜索量、KD（难度）、URL 等字段
+### 📤 关键词上传
+- 支持 CSV 和 Excel 文件格式
+- 拖拽上传，方便快捷
+- 支持两种类型：
+  - **主站关键词**：用于挖掘适合 Create、Tool、Templates 页面的关键词
+  - **Blog 关键词**：直接分类为 Blog 页面
+- 自动解析关键词数据（关键词、搜索量、KD、URL 等）
 
-### 2. 智能分类
-- 一键调用外部 AI 服务进行关键词分类
+### 🎯 一键挖掘分类
+- 调用外部 AI 服务对关键词进行智能分类
 - 支持四种页面类型：
-  - Create 页面
-  - Tool 页面
-  - Templates 页面
-  - Blog 页面
-- 分批处理，支持大量关键词
+  - **Create** 页面
+  - **Tool** 页面
+  - **Templates** 页面
+  - **Blog** 页面
+- 批量处理，进度实时显示
 
-### 3. 批量生成
-- **一键全部生成**：生成所有已分类的关键词
-- **当前页批量生成**：生成当前页面显示的关键词
-- **选中项生成**：生成用户选中的特定关键词
-- **按类型生成**：按页面类型批量生成
-- 调用下游工作流服务生成页面数据
+### 🚀 多种生成模式
+- **一键全部生成**：生成所有已分类且未生成的关键词
+- **当前页批量生成**：生成当前分页的关键词
+- **选中生成**：勾选特定关键词后生成
+- **按类型生成**：按页面类型（Create/Tool/Templates/Blog）批量生成
 
-### 4. 数据管理
-- 支持关键词列表展示和分页
-- 支持按类型和状态筛选
-- 实时显示统计信息和进度
-- 批次管理，支持多批次操作
+### 📊 数据管理
+- 批次管理：查看所有上传批次，跟踪处理进度
+- 关键词列表：分页展示，支持筛选和排序
+- 实时统计：总关键词数、已生成数、处理中、失败数
+- 类型统计：各类型页面的数量统计
 
 ## 技术栈
 
-### 后端
-- Node.js + Express
-- TypeScript
-- SQLite 数据库
-- Multer（文件上传）
-- Axios（HTTP 客户端）
-
-### 前端
-- React 18
-- TypeScript
-- Ant Design 5
-- Vite（构建工具）
+- **框架**：React 18 + TypeScript
+- **UI 库**：Ant Design 5
+- **构建工具**：Vite
+- **HTTP 客户端**：Axios
+- **数据模式**：Mock 数据（可切换真实 API）
 
 ## 项目结构
 
 ```
 seo/
-├── server/                 # 后端服务
+├── client/                    # 前端应用
 │   ├── src/
-│   │   ├── controllers/   # 控制器
-│   │   ├── database/      # 数据库配置
-│   │   ├── routes/        # 路由
-│   │   ├── services/      # 服务层
-│   │   └── index.ts       # 入口文件
-│   ├── package.json
-│   └── tsconfig.json
-├── client/                 # 前端应用
-│   ├── src/
-│   │   ├── components/    # React 组件
-│   │   ├── services/      # API 服务
-│   │   ├── types/         # 类型定义
-│   │   ├── App.tsx        # 主应用
-│   │   └── main.tsx       # 入口文件
-│   ├── package.json
-│   └── vite.config.ts
-└── package.json            # 根配置
-
+│   │   ├── components/        # React 组件
+│   │   │   ├── UploadPanel.tsx       # 上传面板
+│   │   │   ├── BatchList.tsx         # 批次列表
+│   │   │   ├── KeywordTable.tsx      # 关键词表格
+│   │   │   └── Statistics.tsx        # 统计看板
+│   │   ├── services/          # API 服务
+│   │   │   ├── api.ts                # API 封装
+│   │   │   └── mockData.ts           # Mock 数据
+│   │   ├── types/             # TypeScript 类型定义
+│   │   │   └── index.ts
+│   │   ├── App.tsx            # 主应用组件
+│   │   ├── App.css            # 样式文件
+│   │   ├── main.tsx           # 应用入口
+│   │   └── index.css          # 全局样式
+│   ├── index.html             # HTML 模板
+│   ├── package.json           # 依赖配置
+│   ├── tsconfig.json          # TypeScript 配置
+│   └── vite.config.ts         # Vite 配置
+├── package.json               # 根配置
+└── README.md                  # 项目文档
 ```
 
 ## 快速开始
 
-### 前置要求
-- Node.js 18+
-- npm 或 yarn
-
 ### 安装依赖
 
 ```bash
-# 安装所有依赖（根目录、server、client）
-npm run install:all
+npm install
 ```
 
-### 配置环境变量
+或者直接在 client 目录安装：
 
-在 `server` 目录下创建 `.env` 文件：
-
-```env
-PORT=3001
-NODE_ENV=development
-
-# 外部服务配置
-CLASSIFICATION_SERVICE_URL=http://localhost:8000/api/classify
-WORKFLOW_SERVICE_URL=http://localhost:8000/api/workflow
-
-# 数据库配置
-DATABASE_PATH=./data/seo.sqlite
+```bash
+cd client
+npm install
 ```
 
 ### 启动开发服务器
 
 ```bash
-# 同时启动前后端开发服务器
 npm run dev
-
-# 或分别启动
-npm run dev:server  # 后端: http://localhost:3001
-npm run dev:client  # 前端: http://localhost:3000
 ```
 
-### 生产构建
+应用将在 http://localhost:5173 启动。
+
+### 构建生产版本
 
 ```bash
-# 构建前后端
 npm run build
-
-# 启动生产服务器
-npm start
 ```
 
-## API 接口文档
+构建产物将输出到 `client/dist/` 目录。
 
-### 上传关键词
+### 预览生产构建
+
+```bash
+npm run preview
+```
+
+## Mock 数据模式
+
+当前项目默认使用 **Mock 数据模式**，无需后端服务即可运行和测试所有功能。
+
+### 切换到真实 API
+
+如果您有真实的后端服务，可以通过以下步骤切换：
+
+1. 打开 `client/src/services/api.ts`
+2. 将 `USE_MOCK` 常量改为 `false`：
+
+```typescript
+const USE_MOCK = false; // 使用真实 API
+```
+
+3. 配置 API 地址（可选）：
+
+创建 `client/.env` 文件：
+
+```env
+VITE_API_BASE_URL=http://your-api-server.com/api
+```
+
+## API 接口规范
+
+如果需要对接真实后端服务，以下是需要实现的 API 接口：
+
+### 1. 上传关键词
+
 ```
 POST /api/upload
 Content-Type: multipart/form-data
 
-参数:
-- file: 文件 (CSV/Excel)
+参数：
+- file: File（CSV 或 Excel 文件）
 - uploadType: 'main' | 'blog'
-- batchName: 批次名称（可选）
+- batchName?: string（可选，批次名称）
+
+响应：
+{
+  "success": true,
+  "batch_id": 1,
+  "total_keywords": 1500,
+  "message": "Keywords uploaded successfully"
+}
 ```
 
-### 获取批次列表
+### 2. 获取批次列表
+
 ```
 GET /api/batches
+
+响应：
+[
+  {
+    "id": 1,
+    "name": "批次名称",
+    "upload_type": "main" | "blog",
+    "file_name": "file.xlsx",
+    "total_keywords": 1500,
+    "classified_keywords": 1200,
+    "generated_keywords": 800,
+    "status": "uploaded" | "classifying" | "classified" | "error",
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T15:45:00Z"
+  }
+]
 ```
 
-### 获取关键词列表
-```
-GET /api/keywords?batch_id=1&page=1&page_size=50
+### 3. 获取关键词列表
 
-参数:
-- batch_id: 批次ID
-- category: 分类过滤（可选）
-- workflow_status: 状态过滤（可选）
-- page: 页码
-- page_size: 每页数量
+```
+GET /api/keywords?batch_id=1&page=1&page_size=50&category=create&workflow_status=completed
+
+响应：
+{
+  "data": [
+    {
+      "id": 1,
+      "batch_id": 1,
+      "keyword": "design poster online",
+      "search_volume": 10000,
+      "kd": 35.5,
+      "url": "",
+      "category": "create" | "tool" | "templates" | "blog",
+      "status": "pending" | "classified",
+      "workflow_status": "not_started" | "processing" | "completed" | "failed",
+      "workflow_data": {},
+      "created_at": "2024-01-15T10:30:00Z",
+      "updated_at": "2024-01-15T10:35:00Z"
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "page_size": 50,
+    "total": 1500,
+    "total_pages": 30
+  }
+}
 ```
 
-### 一键挖掘分类
+### 4. 一键挖掘分类
+
 ```
 POST /api/classify
 Content-Type: application/json
 
+请求体：
 {
   "batch_id": 1
 }
+
+响应：
+{
+  "success": true,
+  "message": "Classification task started"
+}
 ```
 
-### 生成页面数据
+### 5. 生成页面数据
+
 ```
 POST /api/generate
 Content-Type: application/json
 
+请求体：
 {
   "mode": "all" | "batch" | "single" | "by_category",
   "batch_id": 1,
-  "keyword_ids": [1, 2, 3],  // mode=single 时必填
-  "category": "create",       // mode=by_category 时必填
-  "page": 1,                  // mode=batch 时必填
-  "page_size": 50             // mode=batch 时必填
-}
-```
-
-### 获取统计信息
-```
-GET /api/statistics?batch_id=1
-```
-
-## 外部服务集成
-
-### 分类服务接口
-
-工具会调用外部分类服务来对关键词进行智能分类：
-
-```
-POST {CLASSIFICATION_SERVICE_URL}
-Content-Type: application/json
-
-请求:
-{
-  "keywords": [
-    {
-      "id": 1,
-      "keyword": "create resume",
-      "search_volume": 1000,
-      "kd": 45.5,
-      "url": "https://example.com"
-    }
-  ],
-  "upload_type": "main"
+  "keyword_ids": [1, 2, 3],  // mode=single 时必需
+  "category": "create",       // mode=by_category 时必需
+  "page": 1,                  // mode=batch 时必需
+  "page_size": 50             // mode=batch 时必需
 }
 
-响应:
-{
-  "results": [
-    {
-      "keyword_id": 1,
-      "category": "create",
-      "confidence": 0.95
-    }
-  ]
-}
-```
-
-### 工作流服务接口
-
-工具会调用工作流服务来生成页面数据：
-
-```
-POST {WORKFLOW_SERVICE_URL}
-Content-Type: application/json
-
-请求:
-{
-  "keyword_id": 1,
-  "keyword": "create resume",
-  "category": "create",
-  "metadata": {
-    "search_volume": 1000,
-    "kd": 45.5,
-    "url": "https://example.com"
-  }
-}
-
-响应:
+响应：
 {
   "success": true,
-  "page_data": {
-    // 生成的页面数据
+  "message": "Generation task started",
+  "count": 100
+}
+```
+
+### 6. 获取统计信息
+
+```
+GET /api/statistics
+
+响应：
+{
+  "total_keywords": 4300,
+  "generated_keywords": 1500,
+  "processing_keywords": 100,
+  "failed_keywords": 50,
+  "category_counts": {
+    "create": 1200,
+    "tool": 1000,
+    "templates": 900,
+    "blog": 1200
   }
 }
 ```
@@ -255,81 +275,154 @@ Content-Type: application/json
 
 ```csv
 keyword,search_volume,kd,url
-create resume,1000,45.5,https://example.com/resume
-make presentation,800,38.2,https://example.com/presentation
-design logo,1200,52.3,https://example.com/logo
+design poster online,10000,35.5,
+create logo free,8500,42.3,
+edit photo tool,12000,28.9,
 ```
 
 ### Excel 格式
 
-支持 `.xlsx` 和 `.xls` 格式，表格需包含以下列：
-- keyword（关键词）
-- search_volume（搜索量）
-- kd（难度）
-- url（链接）
+支持 `.xlsx` 和 `.xls` 格式，列名同上。
 
-支持中文列名：
-- 关键词
-- 搜索量
-- 难度
-- 链接
+### 支持的列名变体
 
-## 使用流程
+程序会自动识别以下列名（不区分大小写）：
+- 关键词：`keyword`, `Keyword`, `KEYWORD`, `关键词`
+- 搜索量：`search_volume`, `SearchVolume`, `搜索量`
+- KD（难度）：`kd`, `KD`, `难度`
+- URL：`url`, `URL`, `链接`
 
-1. **上传关键词数据**
-   - 准备 CSV 或 Excel 文件
-   - 选择上传类型（主站/Blog）
-   - 点击上传
+## 界面预览
 
-2. **一键挖掘分类**
-   - 进入"关键词管理"标签
-   - 点击"一键挖掘分类"按钮
-   - 等待分类完成（可实时查看进度）
+### 主要功能
 
-3. **生成页面数据**
-   - 根据需要选择生成方式：
-     - 一键全部生成
-     - 当前页批量生成
-     - 选中特定关键词生成
-     - 按类型批量生成
-   - 查看生成状态和结果
+1. **上传界面**
+   - 拖拽上传文件
+   - 选择上传类型
+   - 自定义批次名称
 
-4. **查看统计和结果**
-   - 实时查看统计信息
-   - 筛选和导出数据
-   - 查看生成结果
+2. **批次管理**
+   - 查看所有批次
+   - 显示进度和状态
+   - 点击查看详情
 
-## 注意事项
+3. **关键词管理**
+   - 关键词列表展示
+   - 筛选（按类型、状态）
+   - 一键挖掘分类
+   - 多种生成模式
+   - 批量操作
 
-1. **文件大小限制**：上传文件不超过 50MB
-2. **并发控制**：工作流生成默认并发数为 5，避免过载
-3. **超时设置**：外部服务调用超时时间为 5 分钟
-4. **错误处理**：如果外部服务失败，会自动标记并记录错误
+4. **统计看板**
+   - 总体统计（总数、已生成、处理中、失败）
+   - 类型统计（Create、Tool、Templates、Blog）
+   - 实时刷新（每 5 秒）
 
 ## 开发说明
 
-### 添加新的页面类型
+### Mock 数据特点
 
-1. 更新类型定义 `client/src/types/index.ts`
-2. 修改分类逻辑（如需要）
-3. 更新前端组件显示
+- 自动生成 3 个示例批次
+- 每个批次包含 500-2000 个关键词
+- 80% 的关键词已分类
+- 模拟分类和生成的异步处理
+- 随机生成失败案例（约 10%）
 
-### 自定义外部服务
+### 自定义 Mock 数据
 
-修改 `server/.env` 文件中的服务 URL：
-```env
-CLASSIFICATION_SERVICE_URL=你的分类服务地址
-WORKFLOW_SERVICE_URL=你的工作流服务地址
+编辑 `client/src/services/mockData.ts` 文件：
+
+```typescript
+// 修改初始批次
+let mockBatches: Batch[] = [
+  // 添加您的批次数据
+];
+
+// 修改关键词数量
+mockKeywordsDB[newBatch.id] = generateMockKeywords(newBatch.id, 自定义数量);
 ```
+
+## 部署
+
+### 静态部署
+
+构建后将 `client/dist/` 目录部署到任何静态托管服务：
+- Vercel
+- Netlify
+- GitHub Pages
+- 阿里云 OSS
+- 腾讯云 COS
+
+### Nginx 配置示例
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+    root /path/to/seo/client/dist;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # 如果使用真实 API，配置代理
+    location /api {
+        proxy_pass http://your-backend-server:3001;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+## 常见问题
+
+### 1. 如何修改默认端口？
+
+修改 `client/vite.config.ts`：
+
+```typescript
+export default defineConfig({
+  server: {
+    port: 3000, // 修改为您想要的端口
+  },
+});
+```
+
+### 2. 如何处理大文件上传？
+
+在真实 API 模式下，确保后端设置了合适的文件大小限制：
+
+```typescript
+// Express 示例
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+```
+
+### 3. 如何自定义页面类型？
+
+修改以下文件中的类型定义：
+- `client/src/types/index.ts` - 更新 TypeScript 类型
+- `client/src/services/mockData.ts` - 更新 Mock 数据生成逻辑
+- `client/src/components/KeywordTable.tsx` - 更新 UI 组件
+
+### 4. 统计数据不刷新？
+
+统计数据每 5 秒自动刷新。如需修改刷新间隔：
+
+```typescript
+// client/src/components/Statistics.tsx
+const interval = setInterval(loadStats, 10000); // 改为 10 秒
+```
+
+## 技术支持
+
+如有问题或建议，请联系开发团队或提交 Issue。
 
 ## 许可证
 
-MIT
-
-## 作者
-
-Claude Code
+MIT License
 
 ---
 
-如有问题或建议，欢迎提出 Issue！
+**注意**：当前版本使用 Mock 数据，适用于前端开发和演示。生产环境请对接真实后端服务。
