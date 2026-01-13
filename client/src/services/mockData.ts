@@ -38,6 +38,18 @@ let mockBatches: Batch[] = [
     created_at: '2024-01-20T11:00:00Z',
     updated_at: '2024-01-20T11:30:00Z',
   },
+  {
+    id: 4,
+    name: '其他类型关键词批次 2024-01',
+    upload_type: 'other',
+    file_name: 'other_keywords_2024_01.csv',
+    total_keywords: 1200,
+    classified_keywords: 950,
+    generated_keywords: 700,
+    status: 'classified',
+    created_at: '2024-01-18T14:20:00Z',
+    updated_at: '2024-01-19T10:15:00Z',
+  },
 ];
 
 // Mock 关键词数据生成器
@@ -67,6 +79,20 @@ const generateMockKeywords = (batchId: number, count: number): Keyword[] => {
     'icon creator',
   ];
 
+  // 常见竞品网站
+  const sourceUrls = [
+    'canva.com',
+    'adobe.com',
+    'figma.com',
+    'venngage.com',
+    'piktochart.com',
+    'crello.com',
+    'visme.com',
+    'designwizard.com',
+    'snappa.com',
+    'easil.com',
+  ];
+
   const result: Keyword[] = [];
   for (let i = 0; i < count; i++) {
     const baseKeyword = keywords[i % keywords.length];
@@ -82,13 +108,21 @@ const generateMockKeywords = (batchId: number, count: number): Keyword[] => {
       else if (rand > 0.35) workflowStatus = 'failed';
     }
 
+    // 随机生成来源URL和流量贡献（80%的关键词有这些数据）
+    const hasSourceData = Math.random() > 0.2;
+    const sourceUrl = hasSourceData ? sourceUrls[Math.floor(Math.random() * sourceUrls.length)] : undefined;
+    const searchVolume = Math.floor(Math.random() * 50000) + 1000;
+    const trafficContribution = hasSourceData ? Math.floor(searchVolume * (Math.random() * 0.3 + 0.1)) : undefined; // 10%-40%的搜索量
+
     result.push({
       id: i + 1,
       batch_id: batchId,
       keyword,
-      search_volume: Math.floor(Math.random() * 50000) + 1000,
+      search_volume: searchVolume,
       kd: Math.random() * 100,
       url: category === 'blog' ? `https://example.com/blog/${keyword.replace(/\s+/g, '-')}` : '',
+      source_url: sourceUrl,
+      traffic_contribution: trafficContribution,
       category: category as any,
       workflow_status: workflowStatus as any,
       workflow_data: workflowStatus === 'completed' ? { generated: true } : null,
@@ -106,9 +140,10 @@ const mockKeywordsDB: Record<number, Keyword[]> = {
   1: generateMockKeywords(1, 1500),
   2: generateMockKeywords(2, 800),
   3: generateMockKeywords(3, 2000),
+  4: generateMockKeywords(4, 1200),
 };
 
-let nextBatchId = 4;
+let nextBatchId = 5;
 let nextKeywordId = 10000;
 
 /**

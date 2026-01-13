@@ -1,7 +1,7 @@
 export interface Batch {
   id: number;
   name: string;
-  upload_type: 'main' | 'blog';
+  upload_type: 'main' | 'blog' | 'other';
   file_name: string;
   total_keywords: number;
   processed_keywords: number;
@@ -19,6 +19,8 @@ export interface Keyword {
   search_volume?: number;
   kd?: number;
   url?: string;
+  source_url?: string;  // 来源网站URL（如：canva.com）
+  traffic_contribution?: number;  // 为来源网站贡献的流量
   category?: 'create' | 'tool' | 'templates' | 'blog';
   status: 'pending' | 'classified';
   workflow_status: 'not_started' | 'processing' | 'completed' | 'failed';

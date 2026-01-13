@@ -7,10 +7,11 @@
 ### 📤 关键词上传
 - 支持 CSV 和 Excel 文件格式
 - 拖拽上传，方便快捷
-- 支持两种类型：
+- 支持三种类型：
   - **主站关键词**：用于挖掘适合 Create、Tool、Templates 页面的关键词
   - **Blog 关键词**：直接分类为 Blog 页面
-- 自动解析关键词数据（关键词、搜索量、KD、URL 等）
+  - **其他类型**：其他来源的关键词数据
+- 自动解析关键词数据（关键词、搜索量、KD、URL、来源网站、流量贡献等）
 
 ### 🎯 一键挖掘分类
 - 调用外部 AI 服务对关键词进行智能分类
@@ -30,6 +31,7 @@
 ### 📊 数据管理
 - 批次管理：查看所有上传批次，跟踪处理进度
 - 关键词列表：分页展示，支持筛选和排序
+- 竞品分析：展示关键词来源网站（如 canva.com）和为其贡献的流量
 - 实时统计：总关键词数、已生成数、处理中、失败数
 - 类型统计：各类型页面的数量统计
 
@@ -141,7 +143,7 @@ Content-Type: multipart/form-data
 
 参数：
 - file: File（CSV 或 Excel 文件）
-- uploadType: 'main' | 'blog'
+- uploadType: 'main' | 'blog' | 'other'
 - batchName?: string（可选，批次名称）
 
 响应：
@@ -163,7 +165,7 @@ GET /api/batches
   {
     "id": 1,
     "name": "批次名称",
-    "upload_type": "main" | "blog",
+    "upload_type": "main" | "blog" | "other",
     "file_name": "file.xlsx",
     "total_keywords": 1500,
     "classified_keywords": 1200,
@@ -190,6 +192,8 @@ GET /api/keywords?batch_id=1&page=1&page_size=50&category=create&workflow_status
       "search_volume": 10000,
       "kd": 35.5,
       "url": "",
+      "source_url": "canva.com",
+      "traffic_contribution": 3500,
       "category": "create" | "tool" | "templates" | "blog",
       "status": "pending" | "classified",
       "workflow_status": "not_started" | "processing" | "completed" | "failed",
@@ -274,15 +278,24 @@ GET /api/statistics
 ### CSV 格式示例
 
 ```csv
-keyword,search_volume,kd,url
-design poster online,10000,35.5,
-create logo free,8500,42.3,
-edit photo tool,12000,28.9,
+keyword,search_volume,kd,url,source_url,traffic_contribution
+design poster online,10000,35.5,,canva.com,3500
+create logo free,8500,42.3,,adobe.com,2100
+edit photo tool,12000,28.9,,figma.com,4800
 ```
 
 ### Excel 格式
 
 支持 `.xlsx` 和 `.xls` 格式，列名同上。
+
+### 字段说明
+
+- **keyword**（必需）：关键词
+- **search_volume**（可选）：搜索量
+- **kd**（可选）：关键词难度（0-100）
+- **url**（可选）：目标链接
+- **source_url**（可选）：来源网站（如：canva.com、adobe.com）
+- **traffic_contribution**（可选）：该关键词为来源网站贡献的流量
 
 ### 支持的列名变体
 
@@ -291,6 +304,8 @@ edit photo tool,12000,28.9,
 - 搜索量：`search_volume`, `SearchVolume`, `搜索量`
 - KD（难度）：`kd`, `KD`, `难度`
 - URL：`url`, `URL`, `链接`
+- 来源网站：`source_url`, `SourceUrl`, `来源网站`, `来源`
+- 流量贡献：`traffic_contribution`, `TrafficContribution`, `流量贡献`, `流量`
 
 ## 界面预览
 

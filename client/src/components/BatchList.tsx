@@ -25,11 +25,13 @@ const BatchList: React.FC<BatchListProps> = ({ batches, loading, onSelect, onRef
   };
 
   const getTypeTag = (type: string) => {
-    return type === 'main' ? (
-      <Tag color="blue">主站关键词</Tag>
-    ) : (
-      <Tag color="purple">Blog</Tag>
-    );
+    const typeMap: Record<string, { color: string; text: string }> = {
+      main: { color: 'blue', text: '主站关键词' },
+      blog: { color: 'purple', text: 'Blog' },
+      other: { color: 'orange', text: '其他' },
+    };
+    const typeInfo = typeMap[type] || { color: 'default', text: type };
+    return <Tag color={typeInfo.color}>{typeInfo.text}</Tag>;
   };
 
   const columns: ColumnsType<Batch> = [

@@ -12,7 +12,7 @@ interface UploadPanelProps {
 }
 
 const UploadPanel: React.FC<UploadPanelProps> = ({ onSuccess }) => {
-  const [uploadType, setUploadType] = useState<'main' | 'blog'>('main');
+  const [uploadType, setUploadType] = useState<'main' | 'blog' | 'other'>('main');
   const [batchName, setBatchName] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -85,6 +85,7 @@ const UploadPanel: React.FC<UploadPanelProps> = ({ onSuccess }) => {
           >
             <Radio value="main">主站关键词（需要挖掘分类）</Radio>
             <Radio value="blog">Blog 类型（直接分类为 Blog）</Radio>
+            <Radio value="other">其他类型</Radio>
           </Radio.Group>
         </div>
 
@@ -106,7 +107,9 @@ const UploadPanel: React.FC<UploadPanelProps> = ({ onSuccess }) => {
           <p className="ant-upload-hint">
             支持 CSV 和 Excel 格式，文件大小不超过 50MB
             <br />
-            文件需包含以下列：keyword（关键词）、search_volume（搜索量）、kd（难度）、url（链接）
+            必需列：keyword（关键词）
+            <br />
+            可选列：search_volume（搜索量）、kd（难度）、url（链接）、source_url（来源网站）、traffic_contribution（流量贡献）
           </p>
         </Dragger>
 

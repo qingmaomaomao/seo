@@ -15,7 +15,7 @@ const api = axios.create({
 // 上传关键词文件
 export const uploadKeywords = async (
   file: File,
-  uploadType: 'main' | 'blog',
+  uploadType: 'main' | 'blog' | 'other',
   batchName?: string
 ): Promise<any> => {
   if (USE_MOCK) {

@@ -194,6 +194,33 @@ const KeywordTable: React.FC<KeywordTableProps> = ({ batch, onUpdate }) => {
       render: (val: number) => (val !== null && val !== undefined ? val.toFixed(1) : '-'),
     },
     {
+      title: '来源网站',
+      dataIndex: 'source_url',
+      key: 'source_url',
+      width: 150,
+      ellipsis: true,
+      render: (url: string) => {
+        if (!url) return '-';
+        const displayUrl = url.replace(/^(https?:\/\/)?(www\.)?/, '');
+        return (
+          <a href={url.startsWith('http') ? url : `https://${url}`} target="_blank" rel="noopener noreferrer">
+            {displayUrl}
+          </a>
+        );
+      },
+    },
+    {
+      title: '流量贡献',
+      dataIndex: 'traffic_contribution',
+      key: 'traffic_contribution',
+      width: 110,
+      align: 'right',
+      render: (val: number) => {
+        if (!val) return '-';
+        return <span style={{ fontWeight: 500, color: '#52c41a' }}>{val?.toLocaleString()}</span>;
+      },
+    },
+    {
       title: '分类',
       dataIndex: 'category',
       key: 'category',
@@ -324,7 +351,7 @@ const KeywordTable: React.FC<KeywordTableProps> = ({ batch, onUpdate }) => {
           showTotal: (total) => `共 ${total} 个关键词`,
           onChange: (page, pageSize) => loadKeywords(page, pageSize),
         }}
-        scroll={{ x: 1200 }}
+        scroll={{ x: 1500 }}
       />
     </div>
   );
