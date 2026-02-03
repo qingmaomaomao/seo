@@ -1,155 +1,248 @@
 ---
 name: seo-intentcreate-skill
-description: Generate SEO-optimized "Create" landing pages for SEELE AI based on keyword groups and competitor analysis. Use this skill when given a set of SEO keywords (with search volume, KD, competitor URLs, etc.) that target a specific product intent (e.g., "AI Game Maker", "AI Website Builder", "Vibe Coding Tool") and need to produce a complete landing page with hero section, quick starts, feature showcase, comparison table, target audience, and FAQ — all optimized for search engine ranking.
+description: Generate SEO-optimized content for SEELE AI "Create" landing pages. Use this skill when given SEO keyword data (keywords, search volume, KD, competitor URLs) and a target HTML file path. The agent reads the template HTML, generates intent-aligned content for each page module, modifies only the text content in the file, then calls the submit tool to complete.
 ---
 
 # SEO Intent Create Page Generator
 
-Generate intent-specific landing pages for SEELE AI that match user search intent and maximize SEO performance.
+Generate intent-specific landing page content for SEELE AI that matches user search intent and maximizes SEO performance.
 
 ## Context
 
-SEELE AI is a game-generation large model capable of creating games, interactive content, websites, and more. Different users search with different product definitions (AI Game Maker, AI Code Generator, AI Website Builder, etc.). Each keyword group needs a dedicated "Create" landing page that:
+SEELE AI is a game-generation large model capable of creating games, interactive content, websites, and more. Different users search with different product definitions:
 
-- Targets the specific keyword intent
-- Reuses the same core product (SEELE AI) with different positioning
-- Maximizes SEO keyword density and long-tail coverage
-- Drives conversions through intent-aligned CTAs
+- AI Game Maker / AI Game Generator
+- AI Code Generator / Vibe Coding Tool
+- AI Website Builder / AI Web App Builder
+- AI Portfolio Maker / Landing Page Templates
+- Three.js Editor
+- ...and more
+
+Each keyword intent needs a dedicated "Create" landing page with content tailored to that specific search intent, while the underlying product (SEELE AI) remains the same.
 
 ## Workflow
 
-Generating a Create page involves these steps:
+```
+1. Receive Input
+   ├── Keyword group data (keywords + metrics)
+   ├── Competitor URLs (optional)
+   └── Target HTML file path
 
-1. **Analyze keywords and intent** — Parse keyword group data, identify primary/secondary keywords, understand search intent
-2. **Research competitors** — Analyze competitor landing pages from provided URLs, extract positioning patterns
-3. **Generate page modules** — Produce content for each of the 7 page modules sequentially
-4. **Apply HTML templates** — For modules 4 (features) and 5 (comparison), read the provided HTML template from assets/, modify only the copywriting, and output the complete code
-5. **SEO quality check** — Verify keyword density, meta tags, schema markup readiness, and long-tail coverage
+2. Read Target File
+   └── Read the HTML template file from the provided path
+
+3. Analyze Keywords & Intent
+   ├── Identify primary keyword (highest value)
+   ├── Identify secondary keywords
+   ├── Determine user intent category
+   └── Extract long-tail keyword opportunities
+
+4. Generate Content for Each Module
+   ├── Module 1: Hero (H1 + subtitle)
+   ├── Module 3: Quick Start options
+   ├── Module 4: Core Features
+   ├── Module 5: Comparison table
+   ├── Module 6: Target audience
+   └── Module 7: FAQ
+
+5. Modify HTML File
+   └── Replace text content only (preserve HTML structure and styling)
+
+6. Submit
+   └── Call the "提交" tool to finalize the page
+```
 
 ## Input Specification
 
-The skill expects the following input data:
+```yaml
+keyword_group:
+  primary: "AI Game Maker"  # Main target keyword
+  secondary:
+    - keyword: "ai game creator"
+      search_volume: 2400
+      kd: 35
+    - keyword: "make games with ai"
+      search_volume: 1800
+      kd: 28
 
-```
-- keyword_group: Primary keyword + related keywords (e.g., "AI Game Maker", "ai game creator", "make games with ai")
-- keyword_data: Per-keyword metrics (search_volume, KD, CPC, trend)
-- competitor_urls: List of competitor landing page URLs for this intent
-- product_angle: How SEELE AI maps to this keyword intent
+competitor_urls:  # Optional, for comparison module
+  - "https://competitor1.com/ai-game-maker"
+  - "https://competitor2.com/game-generator"
+
+target_file: "/path/to/page.html"  # HTML file to modify
 ```
 
 ## Page Modules
 
-Each Create page consists of 7 modules, generated in order:
+Each Create page consists of 7 modules. Module 2 is fixed product UI — skip it.
 
 ### Module 1: Hero Title & Subtitle
 
-Generate a compelling H1 title and subtitle that:
-- Place the primary keyword in the H1 (ideally at the beginning)
-- Include a secondary keyword in the subtitle
-- Communicate the core value proposition for this specific intent
-- Keep H1 under 60 characters, subtitle under 160 characters
+The first impression. Must capture search intent and communicate value instantly.
 
-Output: `{ h1, subtitle, meta_title, meta_description }`
+**Content to generate:**
+- H1 title (≤60 chars, primary keyword at/near beginning)
+- Subtitle (≤160 chars, include secondary keyword, state value proposition)
+- Meta title (for `<title>` tag)
+- Meta description (for `<meta name="description">`)
+
+**SEO requirements:**
+- Primary keyword in H1, ideally within first 3 words
+- Secondary keyword in subtitle
+- Meta title format: `[Primary Keyword] - [Value Prop] | SEELE AI`
+
+See [references/page-modules.md](references/page-modules.md) for title formulas and examples.
 
 ### Module 2: Generation Action Block
 
-This module is a **fixed product component** — do not generate content for it. Skip and proceed to Module 3.
+**SKIP** — This is fixed product UI. Do not modify.
 
 ### Module 3: Quick Start Options
 
-Generate 6-12 quick start cards that:
-- Align with the current keyword theme (e.g., for "AI Game Maker" → "Make a Platformer", "Create an RPG", etc.)
-- Each card has: title (include a long-tail keyword variation), description (1 sentence), CTA text
-- Cover diverse sub-intents to capture long-tail search traffic
-- Provide the fastest path for users to start experiencing the product from the current intent
+Entry points that align with the current keyword theme, designed to capture long-tail traffic and provide immediate value.
 
-Output: Array of `{ title, description, cta_text }`
+**Content to generate:**
+- 6-12 quick start cards
+- Each card: title, description (1 sentence), CTA text
+- Titles should include long-tail keyword variations
 
-See [references/page-modules.md](references/page-modules.md) for detailed quick start patterns.
+**SEO requirements:**
+- Each title targets a specific long-tail query
+- Cover diverse sub-intents within the main keyword theme
+- Use action verbs that match search intent ("Create a...", "Build your...", "Generate...")
 
-### Module 4: Core Features Section
+**Example for "AI Game Maker":**
+```
+- "Create a Platformer Game" — Build classic jump-and-run gameplay in minutes → Start Creating
+- "Make an RPG Adventure" — Design story-driven games with AI assistance → Try Now
+- "Build a Puzzle Game" — Generate brain-teasing mechanics instantly → Get Started
+```
 
-Showcase 3-6 product features framed from the current keyword perspective.
+See [references/page-modules.md](references/page-modules.md) for patterns by keyword category.
 
-Each feature consists of:
-- Feature image (generate using image generation tool)
-- Feature title (include relevant keyword)
-- Feature subtitle/description (2-3 sentences, SEO-conscious)
-- CTA button text + link
+### Module 4: Core Features
 
-**Implementation**: Read the HTML template from `assets/feature-section-template.html`, modify ONLY the text content (titles, descriptions, CTA text), and output the complete HTML. Do NOT modify the UI structure or styling.
+Product features framed from the current keyword perspective. Each feature connects SEELE AI capabilities to user needs for this specific intent.
+
+**Content to generate:**
+- 3-6 features
+- Each feature: title, description (2-3 sentences), CTA text
+- Feature images: generate using image generation tool, or specify image requirements
+
+**SEO requirements:**
+- Include relevant keywords naturally in titles and descriptions
+- Frame features in terms of user benefits, not technical specs
+- Each description should include at least one keyword variation
+
+**Content framing:**
+- For "AI Game Maker": emphasize game creation, no-code, quick results
+- For "Website Builder": emphasize web design, responsive, deployment
+- For "Code Generator": emphasize code output, customization, technical control
+
+See [references/page-modules.md](references/page-modules.md) for feature framing strategies.
 
 ### Module 5: Comparison Section
 
-A comparison between SEELE AI and competitors, positioned favorably for SEELE.
+Position SEELE AI favorably against competitors. Build trust through transparent comparison.
 
-Consists of:
+**Content to generate:**
 - Section title + subtitle
 - Comparison table (SEELE AI vs 2-3 competitors)
-- Comparison dimensions should align with the keyword intent
+- 5-8 comparison dimensions relevant to the keyword intent
+- Below-table summary or CTA
 
-**Implementation**: Read the HTML template from `assets/compare-section-template.html`, modify ONLY the text content, and output the complete HTML. Do NOT modify the UI structure or styling.
+**SEO requirements:**
+- Title should include "[Primary Keyword]: SEELE AI vs [Competitors]" pattern
+- Comparison dimensions should align with what users search for when comparing tools
 
-See [references/competitor-analysis.md](references/competitor-analysis.md) for comparison framing strategies.
+**If competitor URLs provided:**
+1. Analyze competitor pages for positioning and feature claims
+2. Identify SEELE AI advantages
+3. Select comparison dimensions that highlight these advantages
 
-### Module 6: Target Audience Section
+See [references/competitor-analysis.md](references/competitor-analysis.md) for analysis framework.
 
-Define 3-5 user persona groups relevant to this keyword intent:
-- Each persona: title, description, common search terms they use
-- Strategically embed expanded search terms and long-tail keywords in the descriptions
-- Connect each persona to SEELE AI's capabilities
+### Module 6: Target Audience
 
-Output: Array of `{ persona_title, description, search_terms[], cta_text }`
+Define who this page is for. Strategic opportunity to embed expanded search terms.
 
-### Module 7: FAQ Section
+**Content to generate:**
+- 3-5 user personas
+- Each persona: title, description, common search terms they use, CTA
 
-Generate 5-8 FAQ items that:
-- Use actual search queries as questions (from "People Also Ask" style queries)
-- Include the primary keyword in at least 3 questions
-- Answers should be 2-4 sentences, naturally embedding secondary keywords
-- Structure answers for featured snippet eligibility (clear, direct first sentence)
-- Include schema.org FAQPage markup readiness
+**SEO requirements:**
+- Persona descriptions should naturally include long-tail keywords
+- Search terms listed should be actual queries users make
+- Connect each persona's needs to SEELE AI's capabilities
 
-Output: Array of `{ question, answer }`
+**Example personas for "AI Game Maker":**
+```
+- "Indie Game Developers" — Solo creators who want to prototype quickly
+- "Educators & Students" — Teaching game design or learning to code
+- "Content Creators" — YouTubers and streamers making interactive content
+- "Hobbyists" — People who want to make games for fun, no experience needed
+```
 
-See [references/seo-optimization.md](references/seo-optimization.md) for FAQ SEO best practices.
+See [references/page-modules.md](references/page-modules.md) for persona patterns.
 
-## SEO Guidelines
+### Module 7: FAQ
 
-- **Keyword density**: Primary keyword should appear 3-5 times per 500 words across the page
-- **H-tag hierarchy**: One H1, multiple H2s (one per module), H3s within modules
-- **Internal linking**: Include at least 2 internal links to related SEELE AI pages
-- **Long-tail coverage**: Each module should target at least 1-2 long-tail keyword variations
-- **Meta tags**: Generate title tag (≤60 chars), meta description (≤160 chars), include primary keyword in both
+Answer real user questions. Prime opportunity for featured snippets and long-tail ranking.
 
-See [references/seo-optimization.md](references/seo-optimization.md) for comprehensive SEO rules.
+**Content to generate:**
+- 5-8 FAQ items
+- Each item: question, answer (2-4 sentences)
 
-## Output Format
+**SEO requirements:**
+- Questions should mirror actual search queries ("How do I...", "What is...", "Can I...")
+- Include primary keyword in at least 3 questions
+- First sentence of each answer should be direct and complete (featured snippet format)
+- Answers should naturally embed secondary keywords
 
-For each page, produce these deliverables:
+**Question sources:**
+- "People Also Ask" patterns for the primary keyword
+- Common objections or concerns for this product category
+- "How to" and "What is" queries related to the intent
 
-1. **Page metadata** — meta_title, meta_description, target_keywords, slug
-2. **Module 1 output** — H1, subtitle text
-3. **Module 3 output** — Quick start cards JSON
-4. **Module 4 output** — Complete HTML with updated copy (from template)
-5. **Module 5 output** — Complete HTML with updated copy (from template)
-6. **Module 6 output** — Target audience personas JSON
-7. **Module 7 output** — FAQ items JSON with schema.org markup
+See [references/seo-optimization.md](references/seo-optimization.md) for FAQ schema markup and optimization.
+
+## SEO Guidelines Summary
+
+| Element | Requirement |
+|---------|-------------|
+| Primary keyword | 3-5 times per 500 words, in H1, meta title, first paragraph |
+| H-tag hierarchy | One H1, H2 for each module, H3 within modules |
+| Long-tail coverage | Each module targets 1-2 long-tail variations |
+| Meta title | ≤60 chars, primary keyword + value prop |
+| Meta description | ≤160 chars, primary + secondary keyword, CTA |
+| Internal links | 2+ links to related SEELE AI pages |
+
+See [references/seo-optimization.md](references/seo-optimization.md) for complete guidelines.
+
+## File Modification Rules
+
+When modifying the target HTML file:
+
+1. **DO modify:**
+   - Text content (headings, paragraphs, list items, button text)
+   - Alt text for images
+   - Meta tags content (title, description)
+
+2. **DO NOT modify:**
+   - HTML structure and tags
+   - CSS classes and styles
+   - JavaScript code
+   - Layout and component structure
+
+3. **Identify content slots:**
+   - Look for placeholder text patterns in the template
+   - Replace only the placeholder content, preserve surrounding markup
 
 ## Resources
 
 ### references/
 
-- **[keyword-analysis.md](references/keyword-analysis.md)** — How to interpret keyword data, identify primary/secondary keywords, and determine search intent from a keyword group
-- **[page-modules.md](references/page-modules.md)** — Detailed specification for each page module, including quick start patterns, feature framing, and audience segmentation strategies
-- **[seo-optimization.md](references/seo-optimization.md)** — SEO rules for keyword placement, meta tags, FAQ schema markup, long-tail strategies, and quality checklist
-- **[competitor-analysis.md](references/competitor-analysis.md)** — How to analyze competitor landing pages and build favorable comparison positioning
-
-### assets/
-
-HTML templates for modules that require template-based output. Read the template, modify only the text copy, output complete HTML.
-
-- **feature-section-template.html** — Module 4 (Core Features) HTML template
-- **compare-section-template.html** — Module 5 (Comparison) HTML template
-
-These templates will be provided by the user. Placeholder files exist until the actual templates are supplied.
+- **[keyword-analysis.md](references/keyword-analysis.md)** — How to analyze keyword data, identify intent, calculate keyword value, and prioritize keywords
+- **[page-modules.md](references/page-modules.md)** — Detailed content specifications for each module: title formulas, quick start patterns, feature framing, persona templates
+- **[seo-optimization.md](references/seo-optimization.md)** — Complete SEO rules: keyword placement, meta tags, heading hierarchy, FAQ schema, quality checklist
+- **[competitor-analysis.md](references/competitor-analysis.md)** — Framework for analyzing competitor pages and building comparison positioning
